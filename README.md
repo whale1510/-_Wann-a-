@@ -15,3 +15,6 @@ Lee Gyeomhee
 Lee Narin  
 Sin Somang  
 Cho Byeongung
+
+## notes
+(용량 상의 한계로 모델pth 파일은 올리지 않았습니다)
