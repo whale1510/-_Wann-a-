@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>발음 검사 결과</title>
+    <style>
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            height: 10vh;
+        }
+        .message {
+            display: flex;
+            margin-top: 5rem;
+            justify-content: center;
+            align-items: center;
+            height: 5vh;
+            font-size: 2rem;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            background-color: #007BFF; /* 배경색 설정 */
+            color: #fff; /* 텍스트 색상 설정 */
+            border: none;
+            cursor: pointer;
+            margin-right: 5px; /* 버튼 사이 간격 설정 */
+        }
+        .button-container button:hover {
+            background-color: #0056b3; /* 호버 시 배경색 변경 */
+        }
+        .message2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* height: 100vh; */
+            font-size: 2rem;
+        }
+        #vowelMap {
+            width: 500px;
+            height: 500px;
+            position: relative;
+            margin: auto;
+            border: 1px solid #000;
+            background-image: url('/static/image/tongue_position.jpg'); 
+            /* background-image: url('tongue_position.jpg');  */
+
+            background-size: cover;
+            background-position: center; 
+            display: flex;
+        }
+        .vowel {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            text-align: center;
+            color: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8em;
+        }
+        .coordinate {
+            position: absolute;
+            width: 10px; /* 원의 지름 */
+            height: 10px; /* 원의 지름 */
+            background-color: red;
+            border-radius: 50%;
+        }
+
+    </style>
+</head>
+<body> <!-- 아래 주석화한 코드가 작성하지 않아 이렇게 작성. 이미지 를 추가할꺼면 아래 추가하면 될듯-->
+    <div class="message">
+        {% if result == 0 %}
+            축하합니다, 정확합니다!
+        {% elif result == 1 %}
+            부정확합니다ㅜㅜ, 다시 도전!!
+        {% else %}
+            no Data
+        {% endif %}
+    </div>
+    <div class="message2">
+        {% if result == 1 %}
+            당신의 Formant 수치:&nbsp;&nbsp;원어민 Formant 수치:<br>
+            F1: {{ data1 }}&nbsp;&nbsp;&nbsp;&nbsp;{{ data3 }}<br>
+            F2: {{ data2 }}&nbsp;&nbsp;&nbsp;&nbsp;{{ data4 }}<br>
+        {% endif %}
+    </div>
+    {% if result == 1 %}
+        <div id="vowelMap"></div>
+    {% endif %}
+    <div class="button-container">
+        <button id="retryButton">다시 발음하기</button>
+        <button id="nextButton">다음 발음 넘어가기</button>
+    </div>
+    
+    
+    <script>
+        const retryButton = document.getElementById('retryButton');
+        const nextButton = document.getElementById('nextButton');
+        const subLogoElement = document.querySelector('.sub-logo');
+        var data1 = {{ data1 }};
+        var data2 = {{ data2 }};
+        var data3 = {{ data3 }};
+        var data4 = {{ data4 }};
+
+        let accuracyCount = 0;
+        function getCookie(name) {
+            const cookieValue = document.cookie
+                .split('; ')
+                .find(row => row.startsWith(name + '='))
+                .split('=')[1];
+            return cookieValue;
+        }
+        nextButton.addEventListener('click', () => {
+            accuracyCount++;
+            if (accuracyCount === 0) {
+                document.cookie = "username=ㅏ";
+            } else if (accuracyCount === 1) {
+                document.cookie =  'username=ㅓ';
+            }else if (accuracyCount === 2) {
+                document.cookie =  'username=ㅜ';
+            }
+        });
+        document.getElementById("nextButton").addEventListener("click", function() {
+            window.location.href = "http://127.0.0.1:5000/"; 
+        });
+        document.getElementById("retryButton").addEventListener("click", function() {
+            document.cookie =  'username=ㅏ'
+            window.location.href = "http://127.0.0.1:5000/"; 
+        });
+
+        function displayCoordinates() {
+            const map = document.getElementById('vowelMap');
+            map.innerHTML = ''; // 지도를 초기화
+            // 스케일링을 적용한 좌표 값을 계산
+    
+            // const x1 = (3600 / 972) *50 +50; // x 좌표 (수평 위치)
+            // const y1 = (293/ 1200) * 90 + 280; // y 좌표 (수직 위치)
+            // const x2 = (3600/ 1133) * 50 + 50; // x 좌표 (수평 위치)
+            // const y2 = (676 / 1200) * 90 + 280; // y 좌표 (수직 위치)
+            const x1 = (3600 / data2) *40 +60; // x 좌표 (수평 위치)
+            const y1 = (data1/ 1200) * 90 + 280; // y 좌표 (수직 위치)
+            const x2 = (3600/ data4) * 40 + 60; // x 좌표 (수평 위치)
+            const y2 = (data3 / 1200) * 90 + 280; // y 좌표 (수직 위치)
+            // 첫 번째 점 추가
+            const coordinate1 = document.createElement('div');
+            coordinate1.classList.add('coordinate');
+
+            coordinate1.style.left =  x1 + 'px';
+            coordinate1.style.top =y1 + 'px';
+            map.appendChild(coordinate1);
+
+            // 두 번째 점 추가
+            const coordinate2 = document.createElement('div');
+            coordinate2.classList.add('coordinate');
+
+            coordinate2.style.left = x2+ 'px';
+            coordinate2.style.top =  y2 + 'px';
+            map.appendChild(coordinate2);
+        }
+
+
+        displayCoordinates();
+    
+
+
+        // const vowels = {
+        // '아': { f1: 421, f2: 1676, sd_f1: 260, sd_f2: 409 },
+        // '으': { f1: 609, f2: 1481, sd_f1: 220, sd_f2: 289 },
+        // '애': { f1: 425, f2: 1330, sd_f1: 230, sd_f2: 461 },
+        // '우': { f1: 421, f2: 2139, sd_f1: 143, sd_f2: 339 },
+        // '오': { f1: 386, f2: 2279, sd_f1: 222, sd_f2: 408 },
+        // '이': { f1: 450, f2: 1182, sd_f1: 159, sd_f2: 307 },
+        // '어': { f1: 400, f2: 1500, sd_f1: 134, sd_f2: 300 }
+        // };
+
+        // 모음 위치를 맵 상에 표시하는 함수
+        // function displayVowels() {
+        // const map = document.getElementById('vowelMap');
+        // map.innerHTML = ''; // 지도를 초기화
+        // Object.keys(vowels).forEach(vowel => {
+        //     const { f1, f2, sd_f1, sd_f2 } = vowels[vowel];
+        //     // F1, F2 값을 사용하여 위치 계산
+        //     // 표준편차를 고려하여 범위 설정
+        //     const f1_min = f1 - sd_f1;
+        //     const f1_max = f1 + sd_f1;
+        //     const f2_min = f2 - sd_f2;
+        //     const f2_max = f2 + sd_f2;
+
+        //     // Create a div for each vowel
+        //     const vowelElement = document.createElement('div');
+        //     vowelElement.classList.add('vowel');
+        //     vowelElement.textContent = vowel;
+            
+        //     // Calculate the position based on F1, F2 values
+        //     vowelElement.style.bottom = `${(f1_min / 800) * map.clientHeight}px`; // 상대적 위치 조정
+        //     vowelElement.style.left = `${(f2_min / 2500) * map.clientWidth}px`; // 상대적 위치 조정
+            
+        //     // Add tooltip or title for range information
+        //     vowelElement.title = `F1: ${f1_min}-${f1_max}, F2: ${f2_min}-${f2_max}`;
+            
+        //     // Append the vowel div to the map
+        //     map.appendChild(vowelElement);
+        // });
+        // }
+        // // Display the vowels on the map
+        // displayVowels();
+      
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+/* style.css */
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#character {
+    font-size: 1.5em;
+    margin: 20px 0;
+}
+
+#tongueImage {
+    width: 150px; /* 혀 이미지 크기 조정 */
+    margin-top: 20px;
+}
+
+#tongueMotionButton, #speakerImage {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#recordButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+#recordingModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: grey;
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+}
+
+#waveform {
+    height: 100px;
+    background-color: black;
+    margin: 20px 0;
+}
+
+#playbackButton, #submitButton {
+    margin: 10px auto;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+#submitButton {
+    display: block;
+    width: 50px; /* 동그라미 모양 크기 */
+    height: 50px;
+    border-radius: 50%;
+}
